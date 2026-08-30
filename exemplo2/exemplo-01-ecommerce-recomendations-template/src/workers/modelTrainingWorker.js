@@ -84,10 +84,10 @@ async function trainModel({ users }) {
     postMessage({ type: workerEvents.progressUpdate, progress: { progress: 50 } });
 
     // Carregar dados de treinamento (exemplo)
-    const products = await fetch('/data/products.json').then(res => res.json());   
+    const trainingData = await fetch('/data/products.json').then(res => res.json());   
 
     // Criar contexto de treinamento (exemplo)
-    const context = makeContext(products, users);
+    const context = makeContext(trainingData, users);
     debugger;
 
     // Simulate training log

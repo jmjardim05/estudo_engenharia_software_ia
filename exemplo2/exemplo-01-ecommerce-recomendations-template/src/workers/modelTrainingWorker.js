@@ -4,7 +4,9 @@ import { workerEvents } from '../events/constants.js';
 console.log('Model training worker initialized');
 let _globalCtx = {};
 
-function makeContext(trainingData, users) {
+const normalize = (value, min, max) => ((value - min) / (max - min) || 1);
+
+function makeContext(trainingData, users) {    
     // Simulate creating a context for training
 
     // Example: Calculate average price, average age, unique categories and colors
@@ -29,13 +31,13 @@ function makeContext(trainingData, users) {
     const mediumPrice = (maxPrice + minPrice) / 2;
     const mediumAge = (maxAge + minAge) / 2;
 
-    // Criar índices para categorias e cores únicas
-    const categoriesIndex = Object.fromEntries(uniqueCategories.map((cat, index) => [cat, index]));
-    const colorsIndex = Object.fromEntries(uniqueColors.map((color, index) => [color, index]));
-
     // Set() devolve um array com valores únicos, nesse caso categorias e cores únicas
     const uniqueCategories = [...new Set(categories)];
     const uniqueColors = [...new Set(colors)];
+
+    // Criar índices para categorias e cores únicas
+    const categoriesIndex = Object.fromEntries(uniqueCategories.map((cat, index) => [cat, index]));
+    const colorsIndex = Object.fromEntries(uniqueColors.map((color, index) => [color, index]));    
 
     // Criar um objeto para armazenar a soma das idades e a contagem de usuários por idade por produto, para ajudar a personalizar recomendações com base na idade do usuário
     const ageSums = {};
@@ -44,17 +46,34 @@ function makeContext(trainingData, users) {
         user.purchases.forEach(purchase => {
             // Incrementar a soma das idades e a contagem de usuários por idade
             // Se a idade do usuário ainda não estiver no objeto, inicializar com 0, operador lógico OR (||) é usado para definir um valor padrão caso a chave não exista
-            ageSums[purchase.name] = (ageSums[purchase.name] || 0) + 1;
+            ageSums[purchase.name] = (ageSums[purchase.name] || 0) + user.age;
             ageCounts[purchase.name] = (ageCounts[purchase.name] || 0) + 1;
         })
     });
 
+    // Calcular a média de idade por produto, normalizando os valores entre 0 e 1
+    // Se não houver usuários que compraram o produto, usar a média geral de idade
+    // Object.fromEntries() é usado para criar um objeto a partir de um array de pares chave-valor, nesse caso o nome do produto e a média de idade normalizada
+    const avgAgesByProduct = Object.fromEntries(
+        trainingData.map(product => {
+            const avgAge = ageCounts[product.name] ? ageSums[product.name] / ageCounts[product.name] : mediumAge;
+            return [product.name, normalize(avgAge, minAge, maxAge)];
+        })
+    ); 
 
     return {
-        avgPrice,
-        avgAge,
-        uniqueCategories,
-        uniqueColors
+        catalog: trainingData,
+        users,
+        categoriesIndex,
+        colorsIndex,
+        minPrice,
+        maxPrice,
+        minAge,
+        maxAge,
+        numCategories: uniqueCategories.length,
+        numColors: uniqueColors.length,
+        // 2 for price and age, plus one for each unique category and color
+        dimensions: 2 + uniqueCategories.length + uniqueColors.length 
     };
 }
 
@@ -65,10 +84,11 @@ async function trainModel({ users }) {
     postMessage({ type: workerEvents.progressUpdate, progress: { progress: 50 } });
 
     // Carregar dados de treinamento (exemplo)
-    const trainingData = await fetch('/data/products.json').then(res => res.json());
+    const products = await fetch('/data/products.json').then(res => res.json());   
 
     // Criar contexto de treinamento (exemplo)
-    const context = makeContext(trainingData, users);
+    const context = makeContext(products, users);
+    debugger;
 
     // Simulate training log
     postMessage({

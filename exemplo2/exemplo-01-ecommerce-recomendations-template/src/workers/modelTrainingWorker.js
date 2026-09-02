@@ -7,10 +7,10 @@ let _model = null;
 
 const WEIGHTS = {
     // Example weights for different features, these can be adjusted based on importance
-    price: 0.2,
-    age: 0.1,
     category: 0.4,
-    color: 0.3
+    color: 0.3,
+    price: 0.3,
+    age: 0.1
 };
 
 const normalize = (value, min, max) => ((value - min) / (max - min) || 1);
@@ -26,18 +26,13 @@ function makeContext(products, users) {
     const categories = products.map(product => product.category);
     const colors = products.map(product => product.color);
 
-    // reduce() devolve um único valor, nesse caso a soma de todos os preços e idades
-    const avgPrice = prices.reduce((a, b) => a + b, 0) / prices.length;
-    const avgAge = ages.reduce((a, b) => a + b, 0) / ages.length;
-
     const maxPrice = Math.max(...prices);
     const minPrice = Math.min(...prices);
 
     const maxAge = Math.max(...ages);
     const minAge = Math.min(...ages);
 
-    // Computar a média de idade dos usuários e a média de preço dos produtos
-    const mediumPrice = (maxPrice + minPrice) / 2;
+    // Computar a média de idade dos usuários
     const mediumAge = (maxAge + minAge) / 2;
 
     // Set() devolve um array com valores únicos, nesse caso categorias e cores únicas
@@ -123,18 +118,18 @@ function createTrainingData(ctx) {
 
     // Create training data by encoding each product and associating it with user interactions
     ctx.users
-       .filter(user => user.purchases && user.purchases.length > 0)
+        .filter(user => user.purchases && user.purchases.length > 0)
         .forEach(user => {
-        const userVector = encodeUsers(user, ctx).dataSync(); // Convert tensor to array
-        ctx.catalog.forEach(product => {
-            const productvector = encodeProduct(product, ctx).dataSync(); // Convert tensor to array
-            const label = user.purchases.some(p => p.name === product.name) ? 1 : 0; // 1 if purchased, else 0
+            const userVector = encodeUsers(user, ctx).dataSync(); // Convert tensor to array
+            ctx.catalog.forEach(product => {
+                const productvector = encodeProduct(product, ctx).dataSync(); // Convert tensor to array
+                const label = user.purchases.some(p => p.name === product.name) ? 1 : 0; // 1 if purchased, else 0
 
-            inputs.push([...userVector, ...productvector]); // Combine user and product vectors
-            labels.push(label); // Add label for training (1 for purchased, 0 for not purchased)
+                inputs.push([...userVector, ...productvector]); // Combine user and product vectors
+                labels.push(label); // Add label for training (1 for purchased, 0 for not purchased)
+            });
+
         });
-
-    });
 
     return {
         xs: tf.tensor2d(inputs),
@@ -170,7 +165,7 @@ async function configureNeuralNetAndTrain(trainingData) {
     });
 
     await model.fit(trainingData.xs, trainingData.ys, {
-        epochs: 100, // Number of times the model will iterate over the entire training dataset
+        epochs: 125, // Number of times the model will iterate over the entire training dataset
         batchSize: 32, // Number of samples per gradient update
         shuffle: true, // Shuffle the training data before each epoch to prevent the model from learning the order of the data
         callbacks: {
@@ -203,7 +198,7 @@ async function trainModel({ users }) {
     const context = makeContext(products, users);
     _globalCtx = context;
 
-    const encodedProducts = products.map(product => {
+    context.productVectors = products.map(product => {
         return {
             name: product.name,
             metadata: product,
@@ -215,19 +210,40 @@ async function trainModel({ users }) {
 
     _model = await configureNeuralNetAndTrain(trainingData);
 
-    postMessage({ type: workerEvents.progressUpdate, progress: { progress: 100 } }); 
-    postMessage({ type: workerEvents.trainingComplete });    
+    postMessage({ type: workerEvents.progressUpdate, progress: { progress: 100 } });
+    postMessage({ type: workerEvents.trainingComplete });
 }
 
 function recommend(user) {
-    const userTensor = encodeUsers(user, _globalCtx);
-    debugger;
+    if (!_model) {
+        console.error('Model is not trained yet.');
+        return;
+    }
+
+    const context = _globalCtx;
+    const userVector = encodeUsers(user, context).dataSync(); // Converter tensor para array
+    
+    // Criar entradas combinando o vetor do usuário com os vetores de cada produto
+    // Em aplicaçãoes reais, os dados devem estar armazenados em um banco de dados ou serviço de recomendação, e não em memória
+    // por isso, o código abaixo é apenas um exemplo de como gerar recomendações com base no modelo treinado
+    // Armazenar os vetores de produto em bases de dados vetroriais (ex: Pinecone, Weaviate, Milvus, etc.) 
+    // é uma prática comum para sistemas de recomendação em produção
+    
+    const input = context.productVectors.map(({ vector }) => {
+        return [...userVector, ...vector]; // Combinar vetores de usuário e produto
+    });
+    const inputTensor = tf.tensor2d(input);
+    const predictions = _model.predict(inputTensor).dataSync();
+    const recommendations = context.productVectors
+        .map((product, index) => ({ product: product.metadata, score: predictions[index] }))
+        .sort((a, b) => b.score - a.score) // Ordenar por score decrescente
+    
     console.log('will recommend for user:', user)
-    // postMessage({
-    //     type: workerEvents.recommend,
-    //     user,
-    //     recommendations: []
-    // });
+    postMessage({
+        type: workerEvents.recommend,
+        user,
+        recommendations: recommendations.map(r => ({ ...r.product, score: r.score })) // Retornar apenas os produtos recomendados com seus scores
+    });
 }
 
 

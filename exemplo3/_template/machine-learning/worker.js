@@ -6,7 +6,7 @@ const LABELS_PATH = `yolov5n_web_model/labels.json`;
 let _labels = []
 let _model = null
 const INPUTDIM = 640
-const CLASS_THRESHOLD = 0.433333
+const CLASS_THRESHOLD = 0.4
 
 async function loadModelAndLabels() {
     await tf.ready()
@@ -96,10 +96,7 @@ loadModelAndLabels()
 self.onmessage = async ({ data }) => {
     if (data.type !== 'predict') return
 
-    if (!_model) {
-        postMessage({ type: "error", message: "Model not loaded yet" })
-        return
-    }
+    if (!_model)  return
 
     // Pré-processa a imagem de entrada, convertendo-a em um tensor adequado para o modelo
     const input = preprocessImage(data.image)

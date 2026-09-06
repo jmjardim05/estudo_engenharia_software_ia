@@ -12,6 +12,7 @@ export default async function main(game) {
         if (type === 'prediction') {
             console.log(`🎯 AI predicted at: (${x}, ${y})`);
             container.updateHUD(data);
+            
             game.stage.aim.visible = true;
 
             game.stage.aim.setPosition(data.x, data.y);
@@ -19,14 +20,14 @@ export default async function main(game) {
 
             game.handleClick({
                 global: position,
-            });
-
+            });            
         }
 
     };
 
     setInterval(async () => {
         const canvas = game.app.renderer.extract.canvas(game.stage);
+        canvas.willReadFrequently = true;
         const bitmap = await createImageBitmap(canvas);
 
         worker.postMessage({

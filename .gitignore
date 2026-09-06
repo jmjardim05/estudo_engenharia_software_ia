@@ -20,7 +20,6 @@ env/
 
 # Build e distribuição
 build/
-dist/
 *.egg-info/
 .eggs/
 .pytest_cache/

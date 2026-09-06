@@ -557,6 +557,8 @@ class Game {
       y: event.global.y
     };
 
+    debugger
+
     if (this.stage.clickedPauseLink(clickPoint)) {
       this.pause();
       return;

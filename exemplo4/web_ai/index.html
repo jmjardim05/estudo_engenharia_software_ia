@@ -1,0 +1,36 @@
+<output id="output"></output>
+
+<script src="https://cdn.jsdelivr.net/npm/markdown@0.5.0/lib/markdown.min.js"></script>
+<script>
+    const output = document.getElementById("output");
+    const temperature = 0.3;
+
+    (async () => {
+        const initialPrompts = [
+            {
+                role: "system",
+                content: "Você é um assistente de IA que escreve algoritmos simples, na linguagem de programação solicitada"
+            }
+        ]
+
+        const session = await LanguageModel.create(
+            {
+                initialPrompts
+            }
+        );
+
+        // Prompt the model and wait for the whole result to come back.
+        const responseStream = await session.promptStreaming([{ 
+            role: "user",
+            content: "Escreva um programa em Carbon para somar dois números solicitados ao usuário"
+        }]);
+
+        let fullText = "";
+        for await (const chunk of responseStream) {
+            fullText += chunk;
+            output.innerHTML = markdown.toHTML(fullText);
+        }
+      
+    })();    
+    
+</script>

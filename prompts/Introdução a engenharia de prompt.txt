@@ -1,0 +1,64 @@
+Introdução a engenharia de prompt
+1. Contexto da tarefa
+Definir qual o papel do agente qual seu obetivo. Ex: Você é um assistente para oraganizar uma lista de compras de
+medicamentos a partir de leitura de receitas médicas do consultório XYZ
+
+2. Contexto de Tom
+Ajuda o agente a dar mais confiança para o usuário em suas respostas, é importante para  ajudar na decisão de 
+responder aquilo que o gente tem confinaça de responder. Ex: Adote um tom amigável e respeitoso
+
+3. Documentos, imagens, fontes
+Definir qual fonte o agente deve se basear, escreva a estrutura do documento, quais os campos, o que eles significam
+para o modelo não ter que ficar inferindo toda vez que ler o mesmo documento. Como boa prática, apresente a estrutura
+usando tags XML. Ex: O documento anexo é uma receita médica, segue a segunte estrutura: 
+<nome_do_consultorio>nome do consultorio</nome_do_consultorio>
+<nome_do_medico>nome do médico</nome_do_medico>
+<especialidade>especialidade do médico, ex: ortopedista</especialidade>
+<cid>codigo do CID e descrição</cid>
+<receita>
+    <item>
+        <medicacao_ou_procedimento>nome do medicamento, ou procedimento</medicacao_ou_procedimento>        
+        <dose>dose a ser ministrada</dose>
+        <tipo>tipo do medicamento. Ex: comprimido</tipo>
+        <frequencia>frequencia da da dose. ex: a cada 6h; a noite antes de dormir</frequencia>
+    </item>
+</receita>
+
+4. Descrição detalhada da tarefa
+Definir os passos para concluir a tarefa e quais regras deve seguir. Ex: 
+
+Seguir as tarefas e regras definidas abaixo:
+<tarefas>
+    <tarefa id=1>Ler minuciosamente o documento anexado</tarefa>
+    <tarefa id=2>Listar os medicamentos ou procedimentos encontrados</tarefa>
+    <tarefa id=3>Apresentar a lista detalhada</tarefa>
+</tarefas>
+<regras>
+    <regra id=1>Se nome_do_consultorio não for XYZ, diga que o documento não é do consultório XYZ e solicite uma receita do consultorio XYZ</regra>
+    <regra id=2>Se não conseguir ler qualquer item da receita, não inferir, diga ao usuário que não entendeu o item da lista</regra>
+    <regra id=3>Se medicacao_ou_procedimento for um procedimento. ex: ultrassom, então marcar o procedimento no laboratorio ABC</regra>    
+</regras>
+
+5.Exemplos
+Dê exemplos que ajudem o agente a resolver o que foi pedido
+
+6. Histórico de conversas
+Se o cenário requer que o agente reveja conversas anteriores, coloque-os aqui 
+sempre de forma resumida com os pontos mais importantes para o contexto não ficar
+muito grande
+
+7. Descrição da tarefa ou do pedido
+Aqui vai o que o usuário pediu. Ex: <pedido>Leia essa receita e lista os remédios que preciso comprar, ou marque os exames que preciso fazer</pedido>
+
+8.  Pensar antes de responder / respirar fundo
+Peça ao agente para analisar a resposta antes de retornar ao usuário.
+
+9. Formato de saída
+Ex: A saída deve ser no formato JSON seguindo o schema, se faltar campo deixar em branco ou nulo
+<output_format>
+    INSIRA_O_JSON_AQUI, o schema deve ser consistente copm o exemplo de saída 
+</output_format>
+
+10. Resposta pré-definida
+Use a tag resposta para definir uma saída "padrão"
+<resposta>Aqui está a lista dos itens que encontrei na sua receita:</resposta>

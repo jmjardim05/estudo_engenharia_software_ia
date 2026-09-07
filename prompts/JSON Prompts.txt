@@ -1,0 +1,41 @@
+Pontos importantes da aula:
+
+JSON organiza a intenção em campos claros
+Reduz ambiguidade no prompt
+Diminui alucinação do modelo
+Melhora a previsibilidade da saída
+Facilita integração com código e validação
+Permite definir regras: o que fazer sem dados, citar fonte, assumir ou não algo
+Pode marcar incertezas de forma explícita
+JSON ajuda mais que texto solto porque cria uma estrutura estável para o modelo seguir
+LLM não “executa” JSON, mas segue melhor padrões estruturados
+JSON bem formatado é natural para modelos e para ferramentas do ecossistema
+Em resumo: a ideia é transformar um pedido vago em uma especificação clara e controlada.
+
+
+Exemplo básico de JSON prompt:
+
+{
+  "meta": {
+    "nome": "resposta_curta",
+    "versao": "1.0",
+    "idioma": "pt-BR",
+    "objetivo": "responder de forma objetiva"
+  },
+  "role": "especialista",
+  "contexto": {
+    "tema": "JSON Prompt",
+    "publico": "iniciante"
+  },
+  "task": "Explique o conceito com clareza e em poucas linhas.",
+  "constraints": [
+    "resposta curta",
+    "sem excesso de detalhes",
+    "tom didático"
+  ],
+  "output_format": {
+    "tipo": "texto",
+    "estilo": "lista curta"
+  }
+}
+Ideia principal: separar meta, papel, contexto, tarefa e regras deixa o prompt mais previsível e fácil de validar no código.

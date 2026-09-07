@@ -5,6 +5,7 @@ export class TranslationService {
     }
 
     async initialize() {
+        if (this.translator) return;
         try {
             this.translator = await Translator.create({
                 sourceLanguage: 'en',

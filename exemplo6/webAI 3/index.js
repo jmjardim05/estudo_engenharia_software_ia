@@ -17,16 +17,7 @@ import { FormController } from './controllers/formController.js';
     if (errors) {
         view.showError(errors);
         return;
-    }
-
-    // Initialize translation services
-    try {
-        await translationService.initialize();
-    } catch (error) {
-        console.error('Error initializing translation:', error);
-        view.showError([error.message]);
-        return;
-    }
+    }    
 
     // Get and initialize AI parameters
     const params = await aiService.getParams();

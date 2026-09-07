@@ -29,6 +29,16 @@ export class FormController {
         this.view.onFormSubmit(async (event) => {
             event.preventDefault();
 
+            // Initialize translation services
+            if (!this.translationService) this.translationService = new TranslationService();
+            try {
+                await this.translationService.initialize();
+            } catch (error) {
+                console.error('Error initializing translation:', error);
+                view.showError([error.message]);
+                return;
+            }
+
             if (this.isGenerating) {
                 this.stopGeneration();
                 return;

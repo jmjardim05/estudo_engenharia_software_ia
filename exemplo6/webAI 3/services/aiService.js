@@ -118,7 +118,7 @@ export class AIService {
             expectedInputs: [
                 { type: "text", languages: ["en"] },
                 { type: "audio" },
-                { type: "image" },
+                { type: "image" }
             ],
             expectedOutputs: [{ type: "text", languages: ["en"] }],
             temperature: temperature,

@@ -1,0 +1,16 @@
+MCP - Model Context Protocol
+----
+
+Padrão para conectar IA à aplicaçãoes externas
+
+Composta por:
+
+tools -> Ações que o protocolo expõe para a IA
+resources -> recursos (imagens, documentos) que a IA pode utilizar para referência
+
+Como as LLM's escolhem o CMP:
+
+* nome e descrição da tool
+* formato dos parâmetros
+
+O modelo da IA vira um operador que conversa com outros sistemas e agentes

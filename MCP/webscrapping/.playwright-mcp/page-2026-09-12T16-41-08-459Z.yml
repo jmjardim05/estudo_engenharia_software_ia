@@ -1,0 +1,79 @@
+- generic [active] [ref=f1e1]:
+  - link "Ir para o conteúdo" [ref=f1e2] [cursor=pointer]:
+    - /url: "#introducao"
+  - banner [ref=f1e3]:
+    - navigation "Cabeçalho" [ref=f1e4]:
+      - link "API - Portal Único Siscomex" [ref=f1e5] [cursor=pointer]:
+        - /url: .
+        - img "logo" [ref=f1e6]
+      - generic [ref=f1e8]:
+        - generic [ref=f1e9]: API - Portal Único Siscomex
+        - generic: Home
+      - dialog [ref=f1e11]:
+        - search [ref=f1e12]:
+          - generic [ref=f1e13]:
+            - textbox "Buscar" [ref=f1e14]
+            - navigation "Pesquisar":
+              - button "Limpar"
+          - generic: Inicializando a pesquisa
+  - generic [ref=f1e17]:
+    - main [ref=f1e18]:
+      - generic [ref=f1e19]:
+        - navigation "Navegação" [ref=f1e23]:
+          - generic [ref=f1e24]: API - Portal Único Siscomex
+          - list [ref=f1e25]:
+            - listitem [ref=f1e26]:
+              - link "Home" [ref=f1e27] [cursor=pointer]:
+                - /url: .
+            - listitem [ref=f1e29]:
+              - link "Escopo" [ref=f1e30] [cursor=pointer]:
+                - /url: pages/escopo_npi/
+            - listitem [ref=f1e32]:
+              - generic [ref=f1e33]: API - Pública
+            - listitem [ref=f1e36]:
+              - generic [ref=f1e37]: Notificação
+            - listitem [ref=f1e40]:
+              - link "Sintia" [ref=f1e41] [cursor=pointer]:
+                - /url: pages/sintia/
+            - listitem [ref=f1e43]:
+              - link "Tabelas de domínio" [ref=f1e44] [cursor=pointer]:
+                - /url: pages/tabelas_dominio/
+            - listitem [ref=f1e46]:
+              - link "Trânsito Aduaneiro - Argos" [ref=f1e47] [cursor=pointer]:
+                - /url: pages/argos/
+            - listitem [ref=f1e49]:
+              - generic [ref=f1e50]: Release notes
+        - generic [ref=f1e54]:
+          - generic:
+            - navigation "Índice"
+        - article [ref=f1e56]:
+          - heading "Introdução" [level=1] [ref=f1e57]
+          - paragraph [ref=f1e58]: Bem-vindo à API do Portal Único Siscomex (PUCOMEX). Nessa página, consolidamos as informações técnicas de integração entre o PUCOMEX, os sistemas próprios das empresas privadas e os diversos órgãos intervenientes de Comércio Exterior.
+          - paragraph [ref=f1e59]: A API do Portal foi desenvolvida baseada na arquitetura REST. Serão utilizados os formatos XML e JSON, sendo que alguns serviços serão disponibilizados exclusivamente no formato XML, tendo sua estrutura especificada na sintaxe XSD (XML Schema Definition). Estes schemas serão disponibilizados para facilitar a validação e construção dos clientes consumidores dos serviços. Além disso, toda a nossa API usa a codificação UTF-8.
+          - paragraph [ref=f1e60]: Destacamos que o sistema foi implementado recentemente para as empresas privadas prepararem as adaptações necessárias em seus sistemas, podendo ainda ocorrer instabilidades pontuais.
+          - generic [ref=f1e61]:
+            - paragraph [ref=f1e62]: Dúvidas relacionadas ao Novo Processo de Exportações?
+            - paragraph [ref=f1e63]:
+              - emphasis [ref=f1e64]:
+                - text: Envie uma solicitação ao
+                - link "Comex Responde" [ref=f1e65] [cursor=pointer]:
+                  - /url: http://www.comexresponde.gov.br/
+                - text: ", direcionada ao Órgão Responsável \"SECEX - Secretaria de Comércio Exterior\" ."
+          - generic [ref=f1e66]:
+            - paragraph [ref=f1e67]: Problemas relacionados à TI ou ambientes?
+            - paragraph [ref=f1e68]:
+              - emphasis [ref=f1e69]:
+                - text: Entre em contato com a
+                - link "Central Serpro de Atendimento" [ref=f1e70] [cursor=pointer]:
+                  - /url: https://cssinter.serpro.gov.br/SCCDPortalWEB/pages/dynamicPortal.jsf?ITEMNUM=2176
+                - text: ", selecionando no campo \"Assunto\" o sistema do Portal."
+          - paragraph [ref=f1e71]: Esperamos que o PUCOMEX melhore os processos de negócios das empresas e dos intervenientes públicos, aumentando a competitividade, aumentando a qualidade e tempo de atendimento a sociedade e diminuindo os custos acessórios envolvidos.
+          - generic [ref=f1e72]:
+            - paragraph [ref=f1e73]: Importante
+            - paragraph [ref=f1e74]:
+              - emphasis [ref=f1e75]: "Favor atentar que alguns serviços marcados com o texto: \"Funcionalidade ainda não disponível nos ambientes de Validação das Empresas e Produção\" ainda estão em processo de construção. Assim que os mesmos estiverem disponíveis em ambiente de validação e produção, os interessados serão informados e os textos excluídos das funcionalidades."
+    - contentinfo [ref=f1e76]:
+      - generic [ref=f1e79]:
+        - text: Made with
+        - link "Material for MkDocs" [ref=f1e80] [cursor=pointer]:
+          - /url: https://squidfunk.github.io/mkdocs-material/

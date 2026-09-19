@@ -20,6 +20,7 @@ env/
 
 # Build e distribuição
 build/
+neo4j/
 *.egg-info/
 .eggs/
 .pytest_cache/

@@ -1,0 +1,22 @@
+Ollama
+
+-> roda modelos localmente
+-> bom para projetos pessoais
+-> não recomendado p/ produção
+-> pois prodfução requer arquitetura mais robusta
+-> e também é recomendado vLLM no lugar do Ollama para modelos locais em produção
+
+modelos
+-> nos nomes dos modelos o "b" minúsculo significa bilhões de parâmetros, qunatos mais parâemtros melhor a qualidade
+das respostas do modelo, porém significa também usar mais recursos de RAM e vRAM
+-> modelos têm limite de tokens: cha,mado de "CONTEXT_WINDOW" indica quantos toklen 'cabem' de uma vez em uma conversa
+incluindo o prompt, histórico, ferramentas e a respostas
+
+ex: gpt-os120b têm 120 bilhões de parâmetros
+seu context window é de 128K tokens
+
+-> mixture-of-experts (MOE): os modelos não ativam todos os parâmetros por token, a rede neural é esparsa e não densa
+porém um modelo MOE requer que todos os parâmetros sejam pré-cerragados e por isso tem consumo de vRAM alto
+
+-> quantização: redsuzire os pesos p/ otimização a execução do modelo. Ex: diminuir a precisão de 8bits pra 4 mas
+usar precisão maior para os cálculos

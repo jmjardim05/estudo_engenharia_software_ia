@@ -6,7 +6,6 @@ import { Neo4jVectorStore } from "@langchain/community/vectorstores/neo4j_vector
 import { ChatOpenAI } from "@langchain/openai"
 import { AI } from "./ai.ts"
 import { writeFile, mkdir } from "node:fs/promises"
-import { DateTime } from "neo4j-driver"
 
 let _neo4jVectorStore: Neo4jVectorStore | null = null
 

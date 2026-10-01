@@ -10,7 +10,6 @@ env/
 
 # Ambientes e variáveis
 .env
-.env.*
 
 # IDEs e editores
 .vscode/

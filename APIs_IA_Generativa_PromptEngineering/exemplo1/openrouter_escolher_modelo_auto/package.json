@@ -1,0 +1,20 @@
+{
+  "name": "openrouter_escolher_modelo_auto",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "node --env-file .env --inspect --watch src/index.ts",
+    "test:dev": "node --env-file .env --inspect --watch --test ./test/**.**.test.ts",
+    "test": "node --env-file .env --test ./test/**.**.test.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "dependencies": {
+    "@openrouter/sdk": "^1.4.12",
+    "@types/node": "^24.19.0",
+    "fastify": "^5.12.5"
+  }
+}

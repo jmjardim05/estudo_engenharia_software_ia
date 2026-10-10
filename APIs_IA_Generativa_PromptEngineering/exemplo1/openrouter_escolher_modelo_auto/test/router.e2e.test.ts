@@ -22,18 +22,24 @@ test("openrouter escolhe o modelo mais barato", async () => {
     }
     const routerService = new OpenRouterService(customConfig)
     const server = createServer(routerService)
-    server.listen({ port: customConfig.port })
-    
-    const response = await server.inject(
-        {
-            url: "/chat",            
-            method: "POST",
-            body: {
-                question: "o que é LLM?"
+    server.listen({
+        port: customConfig.port,
+    })
+
+    try {
+        const response = await server.inject(
+            {
+                url: "/chat",
+                method: "POST",
+                body: {
+                    question: "o que é typescript"
+                }
             }
-        }
-    )
-    assert.equal(response.statusCode, 200)
-    const llmResponse = response.json() as LLMResponse
-    assert.equal(llmResponse.model, "stealth/space-bunny-alpha")
+        )
+        assert.equal(response.statusCode, 200)
+        const llmResponse = response.json() as LLMResponse
+        assert.equal(llmResponse.model, "qwen/qwen3.8-27b")
+    } finally {
+        await server.close()
+    }
 })

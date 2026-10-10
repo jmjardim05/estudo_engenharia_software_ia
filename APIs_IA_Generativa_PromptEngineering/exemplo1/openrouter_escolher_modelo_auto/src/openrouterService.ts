@@ -18,6 +18,7 @@ export class OpenRouterService {
             apiKey: this.routerConfig.apiKey,
             httpReferer: this.routerConfig.httpReferer, // Optional. Site URL for rankings on openrouter.ai.
             appTitle: this.routerConfig.xTitle, // Optional. Site title for rankings on openrouter.ai.
+            timeoutMs: 60_000,
         });
     }
 
@@ -58,4 +59,3 @@ export class OpenRouterService {
         }
     }
 }
-

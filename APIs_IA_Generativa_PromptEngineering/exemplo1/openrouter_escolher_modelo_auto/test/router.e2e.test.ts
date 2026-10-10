@@ -9,33 +9,31 @@ console.assert(
     "OPENROUTER_API_KEY not set in .env"
 )
 
-// test("openrouter escolhe o modelo mais barato", async () => {
-//     const customConfig = {
-//         ...CONFIG,
-//         provider: {
-//             ...CONFIG.provider,
-//             sort: {
-//                 ...CONFIG.provider.sort,
-//                 by: "price"
-//             }
-//         }
-//     }
-//     const routerService = new OpenRouterService(customConfig)
-//     const server = createServer(routerService)
-//     server.listen({ port: customConfig.port })
+test("openrouter escolhe o modelo mais barato", async () => {
+    const customConfig = {
+        ...CONFIG,
+        provider: {
+            ...CONFIG.provider,
+            sort: {
+                ...CONFIG.provider.sort,
+                by: "price"
+            }
+        }
+    }
+    const routerService = new OpenRouterService(customConfig)
+    const server = createServer(routerService)
+    server.listen({ port: customConfig.port })
     
-//     const response = await server.inject(
-//         {
-//             url: "/chat",            
-//             method: "POST",
-//             body: {
-//                 question: "o que é LLM?"
-//             }
-//         }
-//     )
-//     assert.equal(response.statusCode, 200)
-//     const llmResponse = response.json() as LLMResponse
-//     assert.equal(llmResponse.model, "stealth/space-bunny-alpha")
-// })
-
-test.todo("openrouter escolhe o modelo com maior saída")
+    const response = await server.inject(
+        {
+            url: "/chat",            
+            method: "POST",
+            body: {
+                question: "o que é LLM?"
+            }
+        }
+    )
+    assert.equal(response.statusCode, 200)
+    const llmResponse = response.json() as LLMResponse
+    assert.equal(llmResponse.model, "stealth/space-bunny-alpha")
+})

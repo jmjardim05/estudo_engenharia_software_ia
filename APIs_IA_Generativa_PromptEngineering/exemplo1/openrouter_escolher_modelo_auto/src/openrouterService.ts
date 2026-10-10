@@ -1,9 +1,11 @@
 import { OpenRouter } from '@openrouter/sdk';
 import { ModelConfig, CONFIG } from './config.ts';
+import { type SendChatCompletionRequestRequest } from '@openrouter/sdk/models/operations';
+import { type ProviderPreferences } from '@openrouter/sdk/models';
 
 export class LLMResponse {
-    model: string;
-    content: string;
+    model?: string;
+    content?: string;
 }
 
 export class OpenRouterService {
@@ -20,7 +22,7 @@ export class OpenRouterService {
     }
 
     async generate(prompt: string): Promise<LLMResponse> {
-        const request = {
+        const request: SendChatCompletionRequestRequest = {
             chatRequest: {
                 models: this.routerConfig.models,
                 messages: [
@@ -30,8 +32,8 @@ export class OpenRouterService {
                     },
                 ],
                 temperature: this.routerConfig.temperature,
-                maxTokens: this.routerConfig.maxTokens,
-                provider: this.routerConfig.provider
+                maxCompletionTokens: this.routerConfig.maxTokens,
+                provider: this.routerConfig.provider as ProviderPreferences
             }
         }
 

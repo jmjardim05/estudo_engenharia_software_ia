@@ -1,8 +1,8 @@
 import { OpenRouter } from '@openrouter/sdk';
-import { type ModelConfig, config } from './config.ts';
+import { type ModelConfig, config } from '../config.ts';
 import { type ChatGenerationParams, type ProviderPreferences } from '@openrouter/sdk/models';
-import { IntentSchema } from './prompts/v1/identifyIntent.ts';
-import { MessageSchema } from './prompts/v1/messageGenerator.ts';
+import { IntentSchema } from '../prompts/v1/identifyIntent.ts';
+import { MessageSchema } from '../prompts/v1/messageGenerator.ts';
 import * as z from 'zod/v4';
 
 export class LLMResponse {

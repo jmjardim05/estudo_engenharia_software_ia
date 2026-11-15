@@ -1,7 +1,13 @@
+import { config } from '../config.ts';
+import { AIService } from '../services/aiService.ts';
+import { AppointmentService } from '../services/appointmentService.ts';
 import { buildAppointmentGraph } from './graph.ts';
 
 export function buildGraph() {
-  return buildAppointmentGraph();
+  const aiService = new AIService(config);
+  const appointmentService = new AppointmentService();
+
+  return buildAppointmentGraph(aiService, appointmentService);
 }
 
 export const graph = async () => {

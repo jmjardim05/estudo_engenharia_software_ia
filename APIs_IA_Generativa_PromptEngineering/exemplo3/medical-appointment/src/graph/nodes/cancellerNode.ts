@@ -1,13 +1,12 @@
 import { AppointmentService } from '../../services/appointmentService.ts';
 import type { GraphState } from '../graph.ts';
 
-export function createCancellerNode() {
+export function createCancellerNode(appointmentService: AppointmentService) {
   return async (state: GraphState): Promise<GraphState> => {
     console.log(`❌ Cancelling appointment...`);
 
     try {
 
-      const appointmentService = new AppointmentService();
       appointmentService.cancelAppointment(
         state.professionalId!,        
         state.patientName!,

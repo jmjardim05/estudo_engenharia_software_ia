@@ -1,10 +1,9 @@
 import type { GraphState } from '../graph.ts';
 import { AIMessage } from 'langchain';
-import { MessageSchema, getSystemPrompt, getUserPromptTemplate } from '../../prompts/v1/messageGenerator.ts';
-import { OpenRouterService } from '../../openrouterService.ts';
-import { config } from '../../config.ts';
+import { MessageResponse, MessageSchema, getSystemPrompt, getUserPromptTemplate } from '../../prompts/v1/messageGenerator.ts';
+import { AIService } from '../../services/aiService.ts';
 
-export function createMessageGeneratorNode() {
+export function createMessageGeneratorNode(aiService: AIService) {
     return async (state: GraphState): Promise<GraphState> => {
         console.log(`💬 Generating response message...`);
 
@@ -31,9 +30,8 @@ export function createMessageGeneratorNode() {
                 details,
             });
 
-            const ai = new OpenRouterService(config);
-            const response = await ai.generate(systemPrompt, userPrompt, MessageSchema);
-            const aiMessage = new AIMessage(response.content.message);
+            const response = await aiService.generateStructured<MessageResponse>(systemPrompt, userPrompt, MessageSchema);
+            const aiMessage = new AIMessage(response.message);
 
             console.log(`✅ Response message generated successfully: ${aiMessage.text}`);
             return {

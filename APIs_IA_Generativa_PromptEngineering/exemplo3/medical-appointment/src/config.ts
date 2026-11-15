@@ -19,16 +19,16 @@ console.assert(process.env.OPENROUTER_API_KEY, 'OPENROUTER_API_KEY is not set in
 
 export const config: ModelConfig = {
   apiKey: process.env.OPENROUTER_API_KEY!,
-  httpReferer: '',
+  httpReferer: 'http://jmslasher.com',
   xTitle: 'IA Devs - Prompt Chaining Article Generator',
   models: [
     "qwen/qwen3.8-27b",
-    "stealth/space-bunny-alpha",
+    "inclusionai/ling-3.2-flash",
     "google/gemma-4-31b-it"
   ],
   provider: {
     sort: {
-      by: 'throughput', // Route to model with highest throughput (fastest response)
+      by: 'throughput', 
       partition: 'none',
     },
   },

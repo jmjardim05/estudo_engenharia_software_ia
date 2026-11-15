@@ -1,5 +1,5 @@
 import type { GraphState } from '../graph.ts';
-import { getSystemPrompt, getUserPromptTemplate, IntentData, IntentSchema } from '../../prompts/v1/identifyIntent.ts';
+import { getSystemPrompt, getUserPromptTemplate, IntentSchema } from '../../prompts/v1/identifyIntent.ts';
 import { professionals } from '../../services/appointmentService.ts';
 import { AIService } from '../../services/aiService.ts';
 
@@ -12,7 +12,7 @@ export function createIdentifyIntentNode(aiService: AIService) {
    const userPrompt = getUserPromptTemplate(input);
 
     try {      
-      const response = await aiService.generateStructured<IntentData>(systemPrompt, userPrompt, IntentSchema);
+      const response = await aiService.generateStructured(systemPrompt, userPrompt, IntentSchema);
 
       return {
         ...state,

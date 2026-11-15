@@ -48,7 +48,6 @@ export function createSchedulerNode(appointmentService: AppointmentService) {
       console.log(`✅ Appointment scheduled successfully`);
 
       return {
-        ...state,
         actionSuccess: true,
         appointmentData: appointment,
       };

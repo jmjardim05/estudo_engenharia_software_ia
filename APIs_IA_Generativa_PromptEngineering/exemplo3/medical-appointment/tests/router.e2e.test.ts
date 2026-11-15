@@ -5,21 +5,21 @@ import { professionals } from '../src/services/appointmentService.ts';
 
 const app = createServer();
 
-async function makeARequest(question: string) {
-    return await app.inject({
+async function makeARequest(question: string) {    
+    const response = await app.inject({
         method: 'POST',
         url: '/chat',
         payload: {
             question,
         },
     });
+    return response;
 }
 
 describe('Medical Appointment System - E2E Tests', async () => {
-
     it('Schedule appointment - Success', async () => {
         const response = await makeARequest(
-            `Olá, sou Maria Santos e quero agendar uma consulta com ${professionals.at(0)?.name} Dr. Alicio da Silva para amanhã às 16h para um check-up regular`
+            `Olá, sou Maria Santos e quero agendar uma consulta com ${professionals.at(0)?.name} para amanhã às 16h para um check-up regular`
         )
 
         console.log('Schedule Success Response:', response.body);
@@ -27,7 +27,7 @@ describe('Medical Appointment System - E2E Tests', async () => {
         assert.equal(response.statusCode, 200);
         const body = JSON.parse(response.body);
         assert.equal(body.intent, 'schedule');
-        // assert.equal(body.success, true);
+        assert.equal(body.actionSuccess, true);
     });
 
 
@@ -46,6 +46,6 @@ describe('Medical Appointment System - E2E Tests', async () => {
         assert.equal(response.statusCode, 200);
         const body = JSON.parse(response.body);
         assert.equal(body.intent, 'cancel');
-        // assert.equal(body.success, true);
+        assert.equal(body.actionSuccess, true);
     });
 });

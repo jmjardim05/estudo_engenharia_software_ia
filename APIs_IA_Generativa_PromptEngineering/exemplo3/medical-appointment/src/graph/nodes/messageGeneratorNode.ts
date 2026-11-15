@@ -1,18 +1,15 @@
 import type { GraphState } from '../graph.ts';
 import { AIMessage } from 'langchain';
-import { MessageResponse, MessageSchema, getSystemPrompt, getUserPromptTemplate } from '../../prompts/v1/messageGenerator.ts';
+import { MessageSchema, getSystemPrompt, getUserPromptTemplate } from '../../prompts/v1/messageGenerator.ts';
 import { AIService } from '../../services/aiService.ts';
 
 export function createMessageGeneratorNode(aiService: AIService) {
-    return async (state: GraphState): Promise<GraphState> => {
+    return async (state: GraphState): Promise<Partial<GraphState>> => {
         console.log(`💬 Generating response message...`);
 
-        try { 
-            const scenario = state.intent === 'schedule' && state.actionSuccess ? 'schedule_success' :
-                state.intent === 'schedule' && !state.actionSuccess ? 'schedule_error' :
-                state.intent === 'cancel' && state.actionSuccess ? 'cancel_success' :
-                state.intent === 'cancel' && !state.actionSuccess ? 'cancel_error' :
-                'unknown';
+        try {
+            const hasSucceded = state.actionSuccess ? 'succeeded' : 'error'; 
+            const scenario = `${state.intent ?? 'unknown'}_${hasSucceded}`; // This will be replaced with the actual scenario based on the intent and action success
 
             const details = {
                 intent: state.intent,
@@ -30,12 +27,12 @@ export function createMessageGeneratorNode(aiService: AIService) {
                 details,
             });
 
-            const response = await aiService.generateStructured<MessageResponse>(systemPrompt, userPrompt, MessageSchema);
+            const response = await aiService.generateStructured(systemPrompt, userPrompt, MessageSchema);
             const aiMessage = new AIMessage(response.message);
 
             console.log(`✅ Response message generated successfully: ${aiMessage.text}`);
             return {
-                ...state,
+                actionSuccess: true,
                 messages: [
                     ...state.messages,
                     aiMessage,
@@ -44,7 +41,7 @@ export function createMessageGeneratorNode(aiService: AIService) {
         } catch (error) {
             console.error('❌ Error in messageGenerator node:', error);
             return {
-                ...state,
+                actionSuccess: false,
                 messages: [
                     ...state.messages,
                     new AIMessage('An error occurred while processing your request.')

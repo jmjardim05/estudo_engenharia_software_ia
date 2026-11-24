@@ -386,7 +386,7 @@ const prompt = await PromptLoader.load('outline', {
 
 ## Node Version
 
-Requires Node.js >= 22.0.0 for TypeScript strip-types support.
+Requires Node.js >= 24.22.0 for TypeScript strip-types support and to avoid a native-addon cleanup regression in earlier Node.js 24 releases.
 
 ## License
 

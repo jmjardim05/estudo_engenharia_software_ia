@@ -15,15 +15,18 @@ function parseArgs(): { userId?: string } {
 }
 
 async function main(): Promise<void> {
-  const readline = createInterface({ input: stdin, output: stdout });
+  let readline: ReturnType<typeof createInterface> | undefined;
+  let services: Awaited<ReturnType<typeof buildGraph>> | undefined;
 
   try {
+    readline = createInterface({ input: stdin, output: stdout });
     console.log('═'.repeat(60));
     console.log('  🎵 Recomendador de Músicas com Memória (LangGraph)');
     console.log('═'.repeat(60));
     console.log('\nDigite suas mensagens abaixo. Digite "exit" para sair.\n');
 
-    const { graph, memoryService } = await buildGraph();
+    services = await buildGraph();
+    const { graph, memoryService, preferencesService } = services;
 
     const { userId } = parseArgs();
     const threadId = userId ? `user-${userId}` : `user-${Date.now()}`;
@@ -41,9 +44,11 @@ async function main(): Promise<void> {
     let userContext: string | undefined;
 
     if (memoryService.store) {
-      const existingMemories = await memoryService.store.search(namespace, { limit: 10 });
+      // const existingMemories = await memoryService.store.search(namespace, { limit: 10 });
+      const existingMemories = await preferencesService.getBasicInfo(threadId) ?? 'unknown';
       if (existingMemories?.length > 0) {
-        userContext = existingMemories.map((m: any) => m.value.data).join('\n');
+        // userContext = existingMemories.map((m: any) => m.value.data).join('\n');
+        userContext = existingMemories;
         console.log(`📚 Informações do usuário carregadas:\n${userContext}\n`);
       }
     }
@@ -95,12 +100,27 @@ async function main(): Promise<void> {
       }
     }
 
-    readline.close();
-
   } catch (error) {
     console.error('\n❌ Erro fatal:', (error as Error).message);
     console.error('\nStack trace:', (error as Error).stack);
-    process.exit(1);
+    process.exitCode = 1;
+  } finally {
+    readline?.close();
+
+    if (services) {
+      const cleanupResults = await Promise.allSettled([
+        services.memoryService.checkpointer.end(),
+        services.memoryService.store.stop(),
+        services.preferencesService.close(),
+      ]);
+
+      for (const result of cleanupResults) {
+        if (result.status === 'rejected') {
+          console.error('❌ Erro ao encerrar serviço:', result.reason);
+          process.exitCode = 1;
+        }
+      }
+    }
   }
 }
 

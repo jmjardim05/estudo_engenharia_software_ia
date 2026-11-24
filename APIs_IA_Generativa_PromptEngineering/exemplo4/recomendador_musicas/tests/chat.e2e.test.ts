@@ -7,6 +7,7 @@ import { unlinkSync, existsSync } from 'node:fs';
 describe('Chat de Recomendação Musical - Testes E2E', () => {
   let graph: any;
   let memoryService: any;
+  let preferencesService: any;
   const testDbPath = './test-memory.db';
 
   before(async () => {
@@ -14,12 +15,26 @@ describe('Chat de Recomendação Musical - Testes E2E', () => {
       unlinkSync(testDbPath);
     }
 
-    const built = await buildGraph();
+    const built = await buildGraph(testDbPath);
     graph = built.graph;
     memoryService = built.memoryService;
+    preferencesService = built.preferencesService;
   });
 
   after(async () => {
+    const cleanupResults = await Promise.allSettled([
+      memoryService.checkpointer.end(),
+      memoryService.store.stop(),
+      preferencesService.close(),
+    ]);
+
+    for (const result of cleanupResults) {
+      if (result.status === 'rejected') {
+        console.error('❌ Erro ao encerrar serviço:', result.reason);
+        process.exitCode = 1;
+      }
+    }
+
     if (existsSync(testDbPath)) {
       unlinkSync(testDbPath);
     }
@@ -54,12 +69,14 @@ describe('Chat de Recomendação Musical - Testes E2E', () => {
     await new Promise(resolve => setTimeout(resolve, 500));
 
     const namespace = ['memories', testThreadId];
-    const savedMemories = await memoryService.store.search(namespace, { limit: 10 });
+    // const savedMemories = await memoryService.store.search(namespace, { limit: 10 });
+    const savedMemories = await preferencesService.getBasicInfo(testThreadId) ?? '';
 
     assert.ok(savedMemories.length > 0, 'Preferências devem estar salvas');
 
-    const memoriesText = savedMemories.map((m: any) => m.value.data).join(' ');
-    assert.ok(memoriesText.includes('Alex'), 'Nome deve estar salvo');
+    // const memoriesText = savedMemories.map((m: any) => m.value.data).join(' ');
+    // assert.ok(memoriesText.includes('Alex'), 'Nome deve estar salvo');
+    assert.ok(savedMemories.includes('Alex'), 'Nome deve estar salvo');
   });
 
   it('Deve manter múltiplas trocas e fazer sumarização', async () => {
@@ -85,17 +102,27 @@ describe('Chat de Recomendação Musical - Testes E2E', () => {
       config
     );
 
+    const response3 = await graph.invoke(
+      {
+        messages: [new HumanMessage('Alguma música animada para correr?')],
+        userId: testThreadId,
+      },
+      config
+    );
+
+
     await new Promise(resolve => setTimeout(resolve, 500));
 
     const namespace = ['memories', testThreadId];
-    const savedMemories = await memoryService.store.search(namespace, { limit: 10 });
+    // const savedMemories = await memoryService.store.search(namespace, { limit: 10 });
+    const savedMemories = await preferencesService.getBasicInfo(testThreadId) ?? '';
 
     assert.ok(savedMemories.length > 0, 'Memórias devem existir');
 
-    const memoriesText = savedMemories.map((m: any) => m.value.data.toLowerCase()).join(' ');
-    assert.ok(memoriesText.includes('sarah'), 'Nome deve estar salvo');
+    const memoriesText = savedMemories //savedMemories.map((m: any) => m.value.data.toLowerCase()).join(' ');
+    assert.ok(memoriesText.toLowerCase().includes('sarah'), 'Nome deve estar salvo');
     assert.ok(
-      memoriesText.includes('indie') || memoriesText.includes('eletrônica') || memoriesText.includes('electronic'),
+      memoriesText.toLowerCase().includes('indie') || memoriesText.toLowerCase().includes('eletrônica') || memoriesText.toLowerCase().includes('electronic'),
       'Gêneros devem estar salvos'
     );
   });
@@ -118,16 +145,17 @@ describe('Chat de Recomendação Musical - Testes E2E', () => {
     await new Promise(resolve => setTimeout(resolve, 500));
 
     const namespace = ['memories', testThreadId];
-    const savedMemories = await memoryService.store.search(namespace, { limit: 10 });
+    // const savedMemories = await memoryService.store.search(namespace, { limit: 10 });
+    const savedMemories = await preferencesService.getBasicInfo(testThreadId) ?? '';
 
     assert.ok(savedMemories.length > 0, 'Deve recuperar informações básicas');
 
-    const memoriesText = savedMemories.map((m: any) => m.value.data).join(' ');
-    assert.ok(memoriesText.includes('Marcus'), 'Deve incluir nome');
-    assert.ok(memoriesText.includes('28'), 'Deve incluir idade');
+    // const memoriesText = savedMemories.map((m: any) => m.value.data).join(' ');
+    assert.ok(savedMemories.includes('Marcus'), 'Deve incluir nome');
+    assert.ok(savedMemories.includes('28'), 'Deve incluir idade');
     assert.ok(
-      memoriesText.toLowerCase().includes('jazz') ||
-      memoriesText.toLowerCase().includes('blues'),
+      savedMemories.includes('jazz') ||
+      savedMemories.includes('blues'),
       'Deve incluir gêneros'
     );
   });
